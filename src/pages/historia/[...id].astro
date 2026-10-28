@@ -1,0 +1,11 @@
+---
+import { articulosHistoria } from '../../lib/utils';
+import ArticuloVista from '../../components/ArticuloVista.astro';
+
+export async function getStaticPaths() {
+  return (await articulosHistoria()).map((entry) => ({ params: { id: entry.id }, props: { entry } }));
+}
+const { entry } = Astro.props;
+---
+
+<ArticuloVista entry={entry} seccion="historia" />

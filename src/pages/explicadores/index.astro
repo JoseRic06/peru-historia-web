@@ -1,0 +1,26 @@
+---
+import Base from '../../layouts/Base.astro';
+import Tarjeta from '../../components/Tarjeta.astro';
+import { explicadoresPublicados } from '../../lib/utils';
+
+const items = await explicadoresPublicados();
+---
+
+<Base titulo="Explicadores">
+  <h1>Explicadores</h1>
+  <p class="lead">Versión en texto de nuestros videos cortos, para leer con calma.</p>
+  {items.length === 0 && <p>Aún no hay explicadores publicados.</p>}
+  <ul class="grid">
+    {items.map((a) => (
+      <Tarjeta
+        seccion="explicadores"
+        id={a.id}
+        titulo={a.data.titulo}
+        resumen={a.data.resumen}
+        epoca={a.data.epoca}
+        serie={a.data.serie}
+        etiquetas={a.data.etiquetas}
+      />
+    ))}
+  </ul>
+</Base>

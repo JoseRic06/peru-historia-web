@@ -1,0 +1,63 @@
+---
+import Base from '../layouts/Base.astro';
+import { articulosHistoria, rangoEvento, textoEvento, url } from '../lib/utils';
+import { EPOCAS, nombreEpoca } from '../lib/epocas';
+
+// La línea de tiempo se genera sola desde fecha_evento de cada artículo de historia.
+const eventos = (await articulosHistoria())
+  .map((a) => ({ a, r: rangoEvento(a.data.fecha_evento)! }))
+  .sort((x, y) => x.r[0] - y.r[0] || x.r[1] - y.r[1]);
+const epocasUsadas = EPOCAS.filter((e) => eventos.some((ev) => ev.a.data.epoca === e.id));
+---
+
+<Base titulo="Línea de tiempo" descripcion="Línea de tiempo interactiva de la historia del Perú.">
+  <h1>Línea de tiempo</h1>
+  <p class="lead">Generada automáticamente con las fechas de los artículos de historia.</p>
+
+  {eventos.length === 0 && <p>Aún no hay eventos.</p>}
+
+  <div class="tl-filtros" role="group" aria-label="Filtrar por época">
+    <button type="button" class="btn secondary tl-btn" data-epoca="" aria-pressed="true">Todas</button>
+    {epocasUsadas.map((e) => (
+      <button type="button" class="btn secondary tl-btn" data-epoca={e.id} aria-pressed="false">{e.nombre}</button>
+    ))}
+  </div>
+
+  <ol class="timeline">
+    {eventos.map(({ a }) => (
+      <li class="tl-item" data-epoca={a.data.epoca}>
+        <span class="tl-year">{textoEvento(a.data.fecha_evento)}</span>
+        <details>
+          <summary>{a.data.titulo}</summary>
+          <p class="meta">{nombreEpoca(a.data.epoca)}{a.data.serie && ` · Serie: ${a.data.serie}`}</p>
+          <p>{a.data.resumen}</p>
+          <a href={url(`historia/${a.id}/`)}>Leer el artículo →</a>
+        </details>
+      </li>
+    ))}
+  </ol>
+</Base>
+
+<style>
+  .tl-filtros { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.5rem 0; }
+  .tl-btn { padding: 0.35rem 0.8rem; font-size: 0.95rem; }
+  .tl-btn[aria-pressed='true'] { background: var(--accent); color: #fff; }
+  .timeline { list-style: none; margin: 0; padding: 0 0 0 1.25rem; border-left: 3px solid var(--accent); }
+  .tl-item { position: relative; margin-bottom: 1.25rem; padding-left: 0.5rem; }
+  .tl-item::before { content: ''; position: absolute; left: -1.7rem; top: 0.55rem; width: 0.75rem; height: 0.75rem; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); }
+  .tl-year { display: block; font-weight: 800; font-size: 1.1rem; color: var(--accent); }
+  summary { cursor: pointer; font-weight: 600; }
+  details[open] { background: var(--surface); border: 1px solid var(--border); border-radius: 0.5rem; padding: 0.5rem 1rem 0.75rem; }
+</style>
+
+<script>
+  const botones = document.querySelectorAll<HTMLButtonElement>('.tl-btn');
+  botones.forEach((b) =>
+    b.addEventListener('click', () => {
+      botones.forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
+      document.querySelectorAll<HTMLElement>('.tl-item').forEach((i) => {
+        i.hidden = !!b.dataset.epoca && i.dataset.epoca !== b.dataset.epoca;
+      });
+    }),
+  );
+</script>

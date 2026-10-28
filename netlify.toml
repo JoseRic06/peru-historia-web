@@ -1,0 +1,17 @@
+# Espejo en Netlify: se publica en la raíz del dominio (sin /peru-historia-web).
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "24"
+  BASE_PATH = "/"
+
+# SITE_URL: en Netlify define la variable SITE_URL con tu dirección (ej. https://mi-sitio.netlify.app).
+# Si no la defines, se usa la de GitHub Pages para los enlaces absolutos (RSS, sitemap).
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

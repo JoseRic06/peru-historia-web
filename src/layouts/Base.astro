@@ -1,0 +1,57 @@
+---
+import '../styles/global.css';
+import { url } from '../lib/utils';
+
+interface Props {
+  titulo: string;
+  descripcion?: string;
+}
+const { titulo, descripcion = 'Historia, noticias y explicadores sobre el Perú, con fuentes verificables.' } = Astro.props;
+const NOMBRE = 'Perú: historia y contexto';
+const pagina = Astro.url.pathname;
+
+const nav = [
+  ['Inicio', ''],
+  ['Historia', 'historia/'],
+  ['Noticias', 'noticias/'],
+  ['Explicadores', 'explicadores/'],
+  ['Videos', 'videos/'],
+  ['Línea de tiempo', 'linea-de-tiempo/'],
+  ['Buscar', 'buscar/'],
+  ['Metodología', 'metodologia/'],
+];
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titulo === NOMBRE ? NOMBRE : `${titulo} · ${NOMBRE}`}</title>
+    <meta name="description" content={descripcion} />
+    <link rel="alternate" type="application/rss+xml" title={NOMBRE} href={url('rss.xml')} />
+    <link rel="canonical" href={new URL(pagina, Astro.site).href} />
+  </head>
+  <body>
+    <a class="skip" href="#contenido">Saltar al contenido</a>
+    <header class="site-header">
+      <div class="wrap">
+        <a class="brand" href={url()}>🇵🇪 {NOMBRE}</a>
+        <nav class="site-nav" aria-label="Principal">
+          {nav.map(([texto, ruta]) => (
+            <a href={url(ruta)} aria-current={pagina === url(ruta) ? 'page' : undefined}>{texto}</a>
+          ))}
+        </nav>
+      </div>
+    </header>
+    <main id="contenido" class="wrap">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="wrap">
+        <a href={url('rss.xml')}>Suscríbete por RSS</a> · Sitio educativo sin publicidad ni rastreadores. Toda la información cita sus fuentes;
+        mira cómo trabajamos en <a href={url('metodologia/')}>Metodología y fuentes</a>.
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,19 @@
+---
+import Base from '../../layouts/Base.astro';
+import Video from '../../components/Video.astro';
+import { videosPublicados } from '../../lib/utils';
+
+const videos = await videosPublicados();
+---
+
+<Base titulo="Videos">
+  <h1>Videos</h1>
+  <p class="lead">Nuestros videos de YouTube y TikTok. Los reproductores solo se cargan cuando los pides.</p>
+  {videos.length === 0 && <p>Aún no hay videos publicados.</p>}
+  {videos.map((v) => (
+    <section>
+      <Video titulo={v.data.titulo} url={v.data.url} plataforma={v.data.plataforma} />
+      <p>{v.data.resumen}</p>
+    </section>
+  ))}
+</Base>

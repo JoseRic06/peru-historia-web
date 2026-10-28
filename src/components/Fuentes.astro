@@ -1,0 +1,26 @@
+---
+import { formatoFecha, archiveUrl } from '../lib/utils';
+
+interface Props {
+  fuentes: { titulo: string; autor: string; url: string }[];
+  actualizado: Date;
+  paginaUrl: string; // dirección pública de esta página, para el enlace a archive.org
+}
+const { fuentes, actualizado, paginaUrl } = Astro.props;
+---
+
+<section class="fuentes" aria-labelledby="fuentes-titulo">
+  <h2 id="fuentes-titulo">Fuentes</h2>
+  <ol>
+    {fuentes.map((f) => (
+      <li>
+        {f.autor}. <a href={f.url} rel="noopener noreferrer">{f.titulo}</a>.
+        <a href={archiveUrl(f.url)} rel="noopener noreferrer" class="meta">[copia]</a>
+      </li>
+    ))}
+  </ol>
+  <p class="article-foot">
+    Última actualización: <time datetime={actualizado.toISOString().slice(0, 10)}>{formatoFecha(actualizado)}</time>
+    · <a href={archiveUrl(paginaUrl)} rel="noopener noreferrer">Ver copia de esta página en archive.org</a>
+  </p>
+</section>

@@ -1,0 +1,97 @@
+:root {
+  --bg: #fbf8f3;
+  --surface: #ffffff;
+  --text: #231f1c;
+  --muted: #615a53;
+  --accent: #b3261e;
+  --accent-dark: #8c1c16;
+  --border: #e3dccf;
+  --max: 46rem;
+  --wide: 68rem;
+  font-size: 100%;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #171412;
+    --surface: #211d1a;
+    --text: #f1ebe3;
+    --muted: #b5aca0;
+    --accent: #ff8a80;
+    --accent-dark: #ffb4ab;
+    --border: #3a342e;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.7;
+}
+
+a { color: var(--accent); text-underline-offset: 0.15em; }
+a:hover { color: var(--accent-dark); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+img { max-width: 100%; height: auto; }
+
+.skip { position: absolute; left: -999px; }
+.skip:focus { left: 1rem; top: 1rem; background: var(--surface); padding: 0.5rem 1rem; z-index: 10; }
+
+.wrap { max-width: var(--wide); margin: 0 auto; padding: 0 1rem; }
+.prose { max-width: var(--max); }
+
+/* Cabecera */
+.site-header { background: var(--surface); border-bottom: 1px solid var(--border); }
+.site-header .wrap { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; align-items: center; padding-block: 0.75rem; }
+.brand { font-weight: 800; font-size: 1.25rem; color: var(--text); text-decoration: none; }
+.site-nav { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; }
+.site-nav a { color: var(--text); text-decoration: none; padding: 0.25rem 0; font-size: 1rem; border-bottom: 2px solid transparent; }
+.site-nav a:hover, .site-nav a[aria-current='page'] { border-bottom-color: var(--accent); }
+
+main { padding-block: 2rem 3rem; min-height: 60vh; }
+
+h1, h2, h3 { line-height: 1.25; }
+h1 { font-size: 2rem; margin-top: 0; }
+h2 { font-size: 1.5rem; margin-top: 2.5rem; }
+.lead { font-size: 1.25rem; color: var(--muted); }
+.meta { color: var(--muted); font-size: 0.95rem; }
+
+/* Tarjetas */
+.grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); padding: 0; list-style: none; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 0.5rem; padding: 1rem 1.25rem; }
+.card h3 { margin: 0.25rem 0 0.5rem; font-size: 1.15rem; }
+.card h3 a { color: var(--text); text-decoration: none; }
+.card h3 a:hover { text-decoration: underline; }
+.card p { margin: 0.25rem 0; font-size: 1rem; }
+
+.tag { display: inline-block; font-size: 0.8rem; background: var(--bg); border: 1px solid var(--border); border-radius: 99px; padding: 0 0.6rem; margin: 0 0.25rem 0.25rem 0; color: var(--muted); }
+.badge { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--accent); }
+
+/* Artículo */
+.article-body img { border-radius: 0.375rem; }
+.article-body blockquote { border-left: 4px solid var(--accent); margin-left: 0; padding-left: 1rem; color: var(--muted); }
+figure { margin: 1.5rem 0; }
+figcaption { font-size: 0.875rem; color: var(--muted); }
+
+.fuentes { background: var(--surface); border: 1px solid var(--border); border-radius: 0.5rem; padding: 0.5rem 1.25rem 1rem; margin-top: 3rem; }
+.fuentes h2 { margin-top: 0.75rem; font-size: 1.25rem; }
+.fuentes li { margin-bottom: 0.5rem; font-size: 1rem; }
+.article-foot { color: var(--muted); font-size: 0.95rem; margin-top: 1rem; }
+
+/* Video: no se carga nada de terceros hasta que se pulsa el botón */
+.video-box { background: var(--surface); border: 1px solid var(--border); border-radius: 0.5rem; padding: 1rem; margin: 1rem 0; }
+.video-frame { aspect-ratio: 16 / 9; width: 100%; border: 0; border-radius: 0.375rem; }
+.video-frame.tiktok { aspect-ratio: 9 / 16; max-width: 20rem; height: 36rem; }
+.btn { display: inline-block; background: var(--accent); color: #fff; border: 0; border-radius: 0.375rem; padding: 0.6rem 1.1rem; font: inherit; font-size: 1rem; cursor: pointer; text-decoration: none; }
+.btn:hover { background: var(--accent-dark); color: #fff; }
+.btn.secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+
+.site-footer { border-top: 1px solid var(--border); padding-block: 1.5rem; color: var(--muted); font-size: 0.95rem; }
+
+.aviso { background: #fff4d6; color: #4a3b00; border-radius: 0.375rem; padding: 0.75rem 1rem; }

@@ -1,0 +1,31 @@
+---
+import { url, textoEvento } from '../lib/utils';
+import { nombreEpoca } from '../lib/epocas';
+
+interface Props {
+  seccion: 'historia' | 'explicadores';
+  id: string;
+  titulo: string;
+  resumen: string;
+  epoca?: string;
+  serie?: string;
+  fechaEvento?: string | number;
+  etiquetas?: string[];
+}
+const { seccion, id, titulo, resumen, epoca, serie, fechaEvento, etiquetas = [] } = Astro.props;
+---
+
+<li
+  class="card"
+  data-epoca={epoca}
+  data-serie={serie}
+  data-etiquetas={etiquetas.join('|')}
+>
+  <span class="badge">
+    {epoca ? nombreEpoca(epoca) : 'Explicador'}{fechaEvento !== undefined && ` · ${textoEvento(fechaEvento)}`}
+  </span>
+  <h3><a href={url(`${seccion}/${id}/`)}>{titulo}</a></h3>
+  <p>{resumen}</p>
+  {serie && <p class="meta">Serie: {serie}</p>}
+  <div>{etiquetas.map((t) => <span class="tag">{t}</span>)}</div>
+</li>

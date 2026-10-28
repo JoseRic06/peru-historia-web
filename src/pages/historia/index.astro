@@ -1,0 +1,58 @@
+---
+import Base from '../../layouts/Base.astro';
+import Tarjeta from '../../components/Tarjeta.astro';
+import Filtros from '../../components/Filtros.astro';
+import { articulosHistoria } from '../../lib/utils';
+import { EPOCAS } from '../../lib/epocas';
+
+const articulos = await articulosHistoria();
+
+const epocasUsadas = EPOCAS.map((e) => e.id as string).filter((id) => articulos.some((a) => a.data.epoca === id));
+const seriesUsadas = [...new Set(articulos.map((a) => a.data.serie).filter((s): s is string => !!s))];
+const etiquetasUsadas = [...new Set(articulos.flatMap((a) => a.data.etiquetas))].sort((a, b) => a.localeCompare(b, 'es'));
+
+// Agrupa: época (en orden cronológico) -> serie -> artículos (ya vienen ordenados por año del evento)
+const porEpoca = EPOCAS.map((epoca) => {
+  const delaEpoca = articulos.filter((a) => a.data.epoca === epoca.id);
+  const series = new Map<string, typeof articulos>();
+  for (const a of delaEpoca) {
+    const clave = a.data.serie ?? 'Artículos sueltos';
+    series.set(clave, [...(series.get(clave) ?? []), a]);
+  }
+  return { epoca, series: [...series.entries()] };
+}).filter((g) => g.series.length > 0);
+---
+
+<Base titulo="Historia del Perú">
+  <h1>Historia del Perú</h1>
+  <p class="lead">Artículos agrupados en series y ordenados por época.</p>
+
+  {articulos.length === 0 && <p>Aún no hay artículos publicados.</p>}
+
+  {articulos.length > 0 && <Filtros epocas={epocasUsadas} series={seriesUsadas} etiquetas={etiquetasUsadas} />}
+
+  {porEpoca.map(({ epoca, series }) => (
+    <section class="epoca-sec">
+      <h2>{epoca.nombre}</h2>
+      {series.map(([serie, items]) => (
+        <div class="grupo">
+          <h3>{serie}</h3>
+          <ul class="grid">
+            {items.map((a) => (
+              <Tarjeta
+                seccion="historia"
+                id={a.id}
+                titulo={a.data.titulo}
+                resumen={a.data.resumen}
+                epoca={a.data.epoca}
+                serie={a.data.serie}
+                fechaEvento={a.data.fecha_evento}
+                etiquetas={a.data.etiquetas}
+              />
+            ))}
+          </ul>
+        </div>
+      ))}
+    </section>
+  ))}
+</Base>

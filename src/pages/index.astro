@@ -1,0 +1,59 @@
+---
+import Base from '../layouts/Base.astro';
+import Tarjeta from '../components/Tarjeta.astro';
+import Video from '../components/Video.astro';
+import { ultimosHistoria, noticiasPublicadas, videosPublicados, formatoFecha, fechaISO, url } from '../lib/utils';
+
+const historia = await ultimosHistoria(3);
+const noticias = (await noticiasPublicadas()).slice(0, 3);
+const videos = await videosPublicados();
+const destacado = videos.find((v) => v.data.destacado) ?? videos[0];
+---
+
+<Base titulo="Perú: historia y contexto">
+  <h1>Perú: historia y contexto</h1>
+  <p class="lead">Historia, noticias y explicadores en español, siempre con fuentes y sin publicidad.</p>
+
+  <section>
+    <h2>Últimos artículos de historia</h2>
+    {historia.length === 0 && <p>Aún no hay artículos.</p>}
+    <ul class="grid">
+      {historia.map((a) => (
+        <Tarjeta
+          seccion="historia"
+          id={a.id}
+          titulo={a.data.titulo}
+          resumen={a.data.resumen}
+          epoca={a.data.epoca}
+          serie={a.data.serie}
+          fechaEvento={a.data.fecha_evento}
+          etiquetas={a.data.etiquetas}
+        />
+      ))}
+    </ul>
+    <p><a href={url('historia/')}>Ver toda la historia →</a></p>
+  </section>
+
+  <section>
+    <h2>Noticias del día</h2>
+    {noticias.length === 0 && <p>Aún no hay noticias.</p>}
+    <ul class="grid">
+      {noticias.map((d) => (
+        <li class="card">
+          <time class="badge" datetime={fechaISO(d.data.fecha)}>{formatoFecha(d.data.fecha)}</time>
+          <h3><a href={url(`noticias/${d.id}/`)}>{d.data.titulo}</a></h3>
+          <p>{d.data.resumen}</p>
+        </li>
+      ))}
+    </ul>
+    <p><a href={url('noticias/')}>Ver todas las noticias →</a></p>
+  </section>
+
+  {destacado && (
+    <section>
+      <h2>Video destacado</h2>
+      <Video titulo={destacado.data.titulo} url={destacado.data.url} plataforma={destacado.data.plataforma} />
+      <p>{destacado.data.resumen}</p>
+    </section>
+  )}
+</Base>

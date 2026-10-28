@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/utils';
+---
+
+<Base titulo="Buscar" descripcion="Busca en todos los artículos, explicadores y noticias.">
+  <h1>Buscar</h1>
+  <noscript><p class="aviso">El buscador necesita JavaScript activado.</p></noscript>
+  <div id="search"><p class="meta">El buscador se genera al compilar el sitio (<code>npm run build</code>). En modo desarrollo no está disponible.</p></div>
+  <link href={url('pagefind/pagefind-ui.css')} rel="stylesheet" />
+  <script is:inline define:vars={{ ruta: url('pagefind/pagefind-ui.js') }}>
+    const s = document.createElement('script');
+    s.src = ruta;
+    s.onload = () => new PagefindUI({ element: '#search', showSubResults: true, resetStyles: false,
+      translations: { placeholder: 'Buscar…', zero_results: 'Sin resultados para [SEARCH_TERM]' } });
+    document.head.appendChild(s);
+  </script>
+</Base>

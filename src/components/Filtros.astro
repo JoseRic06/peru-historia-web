@@ -1,0 +1,69 @@
+---
+import { nombreEpoca } from '../lib/epocas';
+
+interface Props {
+  epocas: string[];
+  series: string[];
+  etiquetas: string[];
+}
+const { epocas, series, etiquetas } = Astro.props;
+---
+
+<form class="filtros" id="filtros" aria-label="Filtrar artículos">
+  <label>Época
+    <select name="epoca">
+      <option value="">Todas</option>
+      {epocas.map((e) => <option value={e}>{nombreEpoca(e)}</option>)}
+    </select>
+  </label>
+  <label>Serie
+    <select name="serie">
+      <option value="">Todas</option>
+      {series.map((s) => <option value={s}>{s}</option>)}
+    </select>
+  </label>
+  <label>Etiqueta
+    <select name="etiqueta">
+      <option value="">Todas</option>
+      {etiquetas.map((t) => <option value={t}>{t}</option>)}
+    </select>
+  </label>
+  <button type="reset" class="btn secondary">Limpiar</button>
+  <p class="meta" id="filtros-estado" role="status" aria-live="polite"></p>
+</form>
+
+<style>
+  .filtros { display: flex; flex-wrap: wrap; gap: 0.75rem 1rem; align-items: end; margin: 1.5rem 0; }
+  label { display: flex; flex-direction: column; font-size: 0.9rem; color: var(--muted); }
+  select { font: inherit; font-size: 1rem; padding: 0.4rem; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 0.375rem; min-width: 10rem; max-width: 100%; }
+  #filtros-estado { flex-basis: 100%; margin: 0; }
+</style>
+
+<script>
+  const form = document.getElementById('filtros') as HTMLFormElement | null;
+  if (form) {
+    const estado = document.getElementById('filtros-estado')!;
+    const aplicar = () => {
+      const f = new FormData(form);
+      const epoca = String(f.get('epoca') ?? '');
+      const serie = String(f.get('serie') ?? '');
+      const etiqueta = String(f.get('etiqueta') ?? '');
+      let visibles = 0;
+      document.querySelectorAll<HTMLElement>('.card[data-epoca]').forEach((c) => {
+        const ok =
+          (!epoca || c.dataset.epoca === epoca) &&
+          (!serie || c.dataset.serie === serie) &&
+          (!etiqueta || (c.dataset.etiquetas ?? '').split('|').includes(etiqueta));
+        c.hidden = !ok;
+        if (ok) visibles++;
+      });
+      // Oculta series y épocas que se quedaron sin tarjetas
+      document.querySelectorAll<HTMLElement>('.grupo, .epoca-sec').forEach((g) => {
+        g.hidden = !g.querySelector('.card:not([hidden])');
+      });
+      estado.textContent = epoca || serie || etiqueta ? `${visibles} artículo(s) encontrados.` : '';
+    };
+    form.addEventListener('change', aplicar);
+    form.addEventListener('reset', () => setTimeout(aplicar));
+  }
+</script>

@@ -1,0 +1,52 @@
+---
+import { idYoutube, idTiktok } from '../lib/utils';
+
+interface Props {
+  titulo: string;
+  url: string;
+  plataforma: 'youtube' | 'tiktok';
+}
+const { titulo, url: enlace, plataforma } = Astro.props;
+const yt = plataforma === 'youtube' ? idYoutube(enlace) : null;
+const tt = plataforma === 'tiktok' ? idTiktok(enlace) : null;
+const embed = yt
+  ? `https://www.youtube-nocookie.com/embed/${yt}`
+  : tt
+    ? `https://www.tiktok.com/embed/v2/${tt}`
+    : null;
+---
+
+<div class="video-box" data-video-embed={embed} data-plataforma={plataforma} data-titulo={titulo}>
+  <strong>{titulo}</strong>
+  <p class="meta">{plataforma === 'youtube' ? 'YouTube' : 'TikTok'}</p>
+  <div class="video-slot">
+    {embed && (
+      <button type="button" class="btn video-play">Ver el video aquí</button>
+    )}
+    <a class="btn secondary" href={enlace} rel="noopener noreferrer" target="_blank">
+      Abrir en {plataforma === 'youtube' ? 'YouTube' : 'TikTok'}
+    </a>
+  </div>
+  <p class="meta">
+    Por privacidad, el video no se carga hasta que lo pidas con el botón.
+  </p>
+</div>
+
+<script>
+  // Solo al hacer clic se crea el iframe, así la página no contacta a YouTube/TikTok antes.
+  document.querySelectorAll<HTMLElement>('.video-box').forEach((box) => {
+    const boton = box.querySelector('.video-play');
+    const embed = box.dataset.videoEmbed;
+    if (!boton || !embed) return;
+    boton.addEventListener('click', () => {
+      const f = document.createElement('iframe');
+      f.src = embed;
+      f.title = box.dataset.titulo ?? 'Video';
+      f.className = 'video-frame' + (box.dataset.plataforma === 'tiktok' ? ' tiktok' : '');
+      f.loading = 'lazy';
+      f.allow = 'encrypted-media; picture-in-picture; fullscreen';
+      f.allowFullscreen = true;
+      box.querySelector('.video-slot')!.replaceChildren(f);
+    });
+  });
+</script>

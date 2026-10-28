@@ -1,0 +1,22 @@
+---
+import Base from '../../layouts/Base.astro';
+import { noticiasPublicadas, formatoFecha, fechaISO, url } from '../../lib/utils';
+
+const dias = await noticiasPublicadas();
+---
+
+<Base titulo="Noticias">
+  <h1>Noticias del día</h1>
+  <p class="lead">Una entrada por día, con resumen propio y enlace a cada fuente original.</p>
+  {dias.length === 0 && <p>Aún no hay noticias publicadas.</p>}
+  <ul class="grid">
+    {dias.map((d) => (
+      <li class="card">
+        <time class="badge" datetime={fechaISO(d.data.fecha)}>{formatoFecha(d.data.fecha)}</time>
+        <h3><a href={url(`noticias/${d.id}/`)}>{d.data.titulo}</a></h3>
+        <p>{d.data.resumen}</p>
+        <p class="meta">{d.data.noticias.length} noticias con fuente</p>
+      </li>
+    ))}
+  </ul>
+</Base>
